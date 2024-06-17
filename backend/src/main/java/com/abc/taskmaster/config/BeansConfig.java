@@ -2,6 +2,7 @@ package com.abc.taskmaster.config;
 
 import com.abc.taskmaster.employee.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,14 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @RequiredArgsConstructor
 public class BeansConfig {
 
+    @Autowired
     private final UserDetailsService userDetailsService;
-    private final EmployeeRepository employeeRepository;
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> employeeRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
 
 
     @Bean

@@ -14,6 +14,7 @@ public class EmployeeDTOMapper implements Function<Employee, EmployeeDTO> {
         }
 
         return new EmployeeDTO(
+                employee.getId(),
                 employee.getUsername(),
                 employee.getFirstName(),
                 employee.getLastName(),

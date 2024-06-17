@@ -1,5 +1,6 @@
 package com.abc.taskmaster.employee;
 
+import com.abc.taskmaster.entity.BaseEntity;
 import com.abc.taskmaster.task.Task;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Entity
 @Builder
 @Table(name = "employee")
-public class Employee implements UserDetails {
+public class Employee extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue
@@ -68,7 +69,7 @@ public class Employee implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles
                 .stream()
-                .map(r -> new SimpleGrantedAuthority(r.name()))
+                .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }
 //    @Override
@@ -83,7 +84,7 @@ public class Employee implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

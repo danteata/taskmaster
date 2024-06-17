@@ -1,5 +1,6 @@
 package com.abc.taskmaster.employee;
 
+import com.abc.taskmaster.auth.AuthenticationResponse;
 import com.abc.taskmaster.security.JWTProvider;
 import com.abc.taskmaster.exception.DuplicateResourceException;
 import com.abc.taskmaster.exception.ResourceNotFoundException;
@@ -9,12 +10,14 @@ import com.abc.taskmaster.util.UploadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -40,7 +43,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.s3Buckets = s3Buckets;
     }
 
-    public void createEmployee(EmployeeRegistrationRequest employeeRegistrationRequest) {
+    public AuthenticationResponse createEmployee(EmployeeRegistrationRequest employeeRegistrationRequest) {
         String email = employeeRegistrationRequest.email();
         if(employeeRepository.existsByEmail(email)) {
             throw new DuplicateResourceException("Email already exists");
@@ -53,10 +56,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .email(employeeRegistrationRequest.email())
                 .password(passwordEncoder.encode(employeeRegistrationRequest.password()))
                 .gender(employeeRegistrationRequest.gender())
+                .roles(employeeRegistrationRequest.roles() != null ? employeeRegistrationRequest.roles() : List.of(Role.USER))
                 .build();
 
-        employeeRepository.save(employee);
-//        var jwtToken = jwtProvider.issueToken(employeeRegistrationRequest.username(), Map.of("roles", employeeRegistrationRequest.roles()));
+        Employee savedEmployee = employeeRepository.save(employee);
+        EmployeeDTO employeeDTO = employeeDTOMapper.apply(savedEmployee);
+        String token =jwtProvider.issueToken(employeeRegistrationRequest.username(), Map.of("roles", employee.getRoles()));
+        return new AuthenticationResponse(token,employeeDTO);
     }
 
     @Override

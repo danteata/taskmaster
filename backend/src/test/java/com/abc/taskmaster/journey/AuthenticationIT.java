@@ -2,6 +2,7 @@ package com.abc.taskmaster.journey;
 
 import com.abc.taskmaster.auth.AuthenticationRequest;
 import com.abc.taskmaster.auth.AuthenticationResponse;
+import com.abc.taskmaster.employee.Role;
 import com.abc.taskmaster.security.JWTProvider;
 import com.abc.taskmaster.employee.EmployeeDTO;
 import com.abc.taskmaster.employee.EmployeeRegistrationRequest;
@@ -35,12 +36,12 @@ public class AuthenticationIT {
 
     private static final Random RANDOM = new Random();
     private static final String AUTHENTICATION_PATH = "/api/v1/auth";
-    private static final String EMPLOYEES_PATH = "/api/v1/employees";
+    private static final String EMPLOYEE_REGISTER_PATH = "/api/v1/auth/signup";
 
     @Test
     void canLogin() {
         // Given
-// create registration customerRegistrationRequest
+// create registration EmployeeRegistrationRequest
         Faker faker = new Faker();
         Name fakerName = faker.name();
         String username = String.valueOf(faker.funnyName());
@@ -57,7 +58,7 @@ public class AuthenticationIT {
         );
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest(
-                email,
+                username,
                 password
         );
 
@@ -70,9 +71,9 @@ public class AuthenticationIT {
                 .expectStatus()
                 .isUnauthorized();
 
-        // send a post customerRegistrationRequest
+        // send a post userRegistrationRequest
         webTestClient.post()
-                .uri(EMPLOYEES_PATH)
+                .uri(EMPLOYEE_REGISTER_PATH)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(
@@ -101,17 +102,14 @@ public class AuthenticationIT {
 
         AuthenticationResponse authenticationResponse = result.getResponseBody();
 
-        EmployeeDTO employeeDTO = authenticationResponse.employeeDTO();
+        EmployeeDTO employeeDTO = authenticationResponse.user();
 
         assertThat(jwtUtil.isTokenValid(
                 jwtToken,
                 employeeDTO.username())).isTrue();
 
         assertThat(employeeDTO.email()).isEqualTo(email);
-        assertThat(employeeDTO.username()).isEqualTo(username);
-        assertThat(employeeDTO.email()).isEqualTo(email);
-        assertThat(employeeDTO.gender()).isEqualTo(gender);
-        assertThat(employeeDTO.roles()).isEqualTo(List.of("ROLE_USER"));
+        assertThat(employeeDTO.roles()).isEqualTo(List.of(Role.USER));
 
     }
 }

@@ -46,7 +46,7 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<List<EmployeeDTO>> getAll(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page = 0, size = 10, Sort.by("lastName").descending());
+        Pageable pageable = PageRequest.of(page = 0, size = 10, Sort.by("createdAt").descending());
         List<EmployeeDTO> employees = employeeService.getAllEmployees(pageable);
 
         return ResponseEntity.ok(employees);

@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -20,6 +21,10 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Service
 public class JWTProvider {
 
+
+
+    @Value("${auth.secret}")
+    private String jwtKey;
 
 //    public static String generateToken(Authentication auth) {
 //        return Jwts.builder().setIssuedAt(new Date())
@@ -83,7 +88,7 @@ public class JWTProvider {
     }
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(Constant.JWT_SECRET.getBytes());
+        return Keys.hmacShaKeyFor(jwtKey.getBytes());
     }
 
 
