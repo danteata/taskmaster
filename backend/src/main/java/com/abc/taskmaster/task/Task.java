@@ -1,10 +1,13 @@
 package com.abc.taskmaster.task;
 
 import com.abc.taskmaster.employee.Employee;
+import com.abc.taskmaster.entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,8 +15,10 @@ import java.util.UUID;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class Task {
+public class Task extends BaseEntity {
 
     @Id
     @GeneratedValue

@@ -80,8 +80,11 @@ public class TaskServiceImpl implements TaskService {
     public void updateTask(UUID id, TaskRequest updateTaskRequest) {
         Task task = taskRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Task not found with id: [%s] ".formatted(id)));
-//        Task taskPayload = TaskMapper.mapToTask(taskDto);
-//        Task updatedTask = taskRepository.save(taskPayload);
+        task.setTitle(updateTaskRequest.title());
+        task.setDescription(updateTaskRequest.description());
+        task.setPriority(updateTaskRequest.priority());
+        task.setStatus(updateTaskRequest.status());
+        taskRepository.save(task);
     }
 
     @Override
